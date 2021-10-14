@@ -10,13 +10,14 @@ defmodule TodoAppWeb.TodoController do
   end
 
   def new(conn, _params) do
-    changeset = Todos.change_todo(%Todo{})
+    user = conn.assigns.current_user
+    changeset = Todos.change_todo(%Todo{}, %{"user_id" => user.id})
     render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"todo" => todo_params}) do
     IO.inspect(binding())
-    
+
     case Todos.create_todo(todo_params) do
       {:ok, todo} ->
         conn
