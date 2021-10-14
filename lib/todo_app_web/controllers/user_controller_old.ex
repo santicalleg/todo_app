@@ -1,4 +1,4 @@
-defmodule TodoAppWeb.UserController do
+defmodule TodoAppWeb.UserControllerOld do
   use TodoAppWeb, :controller
 
   alias TodoApp.Todos
