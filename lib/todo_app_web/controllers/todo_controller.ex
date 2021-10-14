@@ -15,6 +15,8 @@ defmodule TodoAppWeb.TodoController do
   end
 
   def create(conn, %{"todo" => todo_params}) do
+    IO.inspect(binding())
+    
     case Todos.create_todo(todo_params) do
       {:ok, todo} ->
         conn

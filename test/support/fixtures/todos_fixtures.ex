@@ -19,4 +19,21 @@ defmodule TodoApp.TodosFixtures do
 
     todo
   end
+
+  @doc """
+  Generate a user.
+  """
+  def user_fixture(attrs \\ %{}) do
+    {:ok, user} =
+      attrs
+      |> Enum.into(%{
+        born_date: ~D[2021-10-12],
+        email: "some email",
+        last_name: "some last_name",
+        name: "some name"
+      })
+      |> TodoApp.Todos.create_user()
+
+    user
+  end
 end
