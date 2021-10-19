@@ -15,3 +15,5 @@
 <span><%= link "Back", to: Routes.todo_list_path(@conn, :index) %></span>
 <br/>
 <span><%= link "New Todo for this list", to: Routes.todo_path(@conn, :new, todo_list_id: @todo_list.id) %></span>
+<br/>
+<span><%= link "Invite a user to this list", to: Routes.todo_list_path(@conn, :collaborators, @todo_list.id) %></span>

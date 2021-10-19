@@ -1,7 +1,7 @@
 defmodule TodoAppWeb.TodoListController do
   use TodoAppWeb, :controller
 
-  alias TodoApp.Todos
+  alias TodoApp.{Todos, Accounts}
   alias TodoApp.Todos.TodoList
 
   def index(conn, _params) do
@@ -60,5 +60,23 @@ defmodule TodoAppWeb.TodoListController do
     conn
     |> put_flash(:info, "Todo list deleted successfully.")
     |> redirect(to: Routes.todo_list_path(conn, :index))
+  end
+
+  def collaborators(conn, %{"id" => id}) do
+    todo_list = Todos.get_todo_list_with_users!(id)
+    current_user = conn.assigns.current_user
+    users = Accounts.list()
+            |> Enum.filter(fn u -> u not in todo_list.users end)
+            |> Enum.filter(fn u -> u != current_user end)
+    token = get_csrf_token()
+    render(conn, "collaborators.html", todo_list: todo_list, users: users, token: token)
+  end
+
+  def add_collaborators(conn, %{"id" => id, "user_email" => email}) do
+    # require IEx
+    # IEx.pry()
+
+    todo_list = Todos.add_collaborator_to_list(id, email) |> IO.inspect()
+    redirect(conn, to: Routes.todo_list_path(conn, :collaborators, todo_list.id))
   end
 end

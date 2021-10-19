@@ -4,9 +4,11 @@ defmodule TodoApp.Todos do
   """
 
   import Ecto.Query, warn: false
+
   alias TodoApp.Repo
 
   alias TodoApp.Todos.Todo
+  alias TodoApp.Accounts
 
   @doc """
   Returns the list of todos.
@@ -232,6 +234,7 @@ defmodule TodoApp.Todos do
   def get_todo_list!(id), do: Repo.get!(TodoList, id)
 
   def get_todo_list_with_todos!(id), do: Repo.get!(TodoList, id) |> Repo.preload(:todos)
+  def get_todo_list_with_users!(id), do: Repo.get!(TodoList, id) |> Repo.preload(:users)
 
   @doc """
   Creates a todo_list.
@@ -296,5 +299,20 @@ defmodule TodoApp.Todos do
   """
   def change_todo_list(%TodoList{} = todo_list, attrs \\ %{}) do
     TodoList.changeset(todo_list, attrs)
+  end
+
+  def add_collaborator_to_list(todo_list_id, user_id) do
+    todo_list =
+      todo_list_id
+      |> get_todo_list!()
+      |> Repo.preload(:users)
+      |> Repo.preload(:todos)
+
+    user = user_id |> Accounts.get_user_by_email
+
+    todo_list |>
+    change_todo_list(%{})
+    |> Ecto.Changeset.put_assoc(:users, [user | todo_list.users])
+    |> Repo.update!()
   end
 end
